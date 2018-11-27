@@ -1,0 +1,215 @@
+// ConsoleApplication14.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include "pch.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstdlib>
+
+using namespace std;
+
+void inputStudent();
+void searchStudent();
+void editStudent();
+void displayStudent();
+void studentOption();
+
+int main()
+{
+	cout << "What would you like to do?" << endl;
+	cout << "1. Student Menu" << endl;
+	cout << "2. Exit" << endl;
+
+	int choose;
+	cin >> choose;
+	switch (choose) {
+	case 1:
+		studentOption();
+		break;
+	}
+
+
+
+}
+
+void studentOption() {
+	system("cls"); //clears the screen.
+	system("title Library Database");
+	cout << "What would you like to do?" << endl;
+	cout << "1. Input new student " << endl;
+	cout << "2. Search for student " << endl;
+	cout << "3. Edit existing student " << endl;
+	cout << "4. Display all students " << endl;
+	cout << "5. Exit " << endl;
+
+	int choice;
+	cin >> choice;
+
+	switch (choice) {
+	case 1:
+		inputStudent();
+		break;
+	case 2:
+		searchStudent();
+		break;
+	case 3:
+		editStudent();
+		break;
+	case 4: displayStudent();
+		break;
+	}
+	studentOption(); 
+}
+
+
+void inputStudent() //this function allows you to create a new student to add to the database. 
+{
+	system("cls");
+	string fname; //student's first name
+	string lname; //student's last name
+	string fileName;
+	int studentId;
+
+	cout << "Input first name: ";
+	cin >> fname;
+	cout << "Input last name: ";
+	cin >> lname;
+	cout << "Input student ID: ";
+	cin >> studentId;
+	string studentId2 = to_string(studentId);
+	studentId2.append(".txt");
+	ofstream newStudent(studentId2);
+	newStudent << fname << ' ' << lname << ' ' << studentId << ' ' << endl;
+	newStudent.close();
+	ofstream dir("directory.txt", ios::app); //whenever you add something new the old information will not get deleted
+	dir << fname << ' ' << lname << ' ' << studentId << ' ' << endl;
+	dir.close(); //every new student that is created will be stored into this directory file.
+	cout << "Student has been added to the directory." << endl; 
+	system("pause"); 
+	system("cls"); 
+	studentOption(); 
+}
+
+void searchStudent() {
+	system("cls");
+	string fname;
+	string lname;
+	string fileName;
+	int studentId;
+	int blank;
+	cout << "Enter student ID number: " << endl;
+	cin >> studentId;
+	string studentId2 = to_string(studentId);
+	studentId2.append(".txt");
+	ifstream student(studentId2);
+	while (student >> fname >> lname >> blank) {
+		int lnameLength = lname.size();
+		int fnameLength = fname.size();
+		int lengthTotal = fnameLength + lnameLength;
+		string response;
+		cout << "Is this the correct student name you are looking for? [Y/N]" << endl;
+		cout << fname << ' ' << lname << endl;
+		cin >> response;
+		if ((response == "y") || (response == "Y")) {
+			system("cls");
+			cout << "Name: ";
+			for (int x = 1; x < lengthTotal; x++) {
+				cout << " ";
+			}
+			cout << "ID #:" << endl;
+			for (int y = 1; y < lengthTotal + 20; y++) {
+				cout << '-';
+			}
+			cout << ' ' << endl;
+			cout << fname << ' ' << lname << ' ' << '\t' << studentId << endl;
+		}
+		if ((response == "n") || (response == "N")) {
+			main();
+		}
+	}
+	system("pause");
+	main();
+}
+
+
+
+void editStudent() {
+	system("cls");
+	string fname;
+	string lname;
+	string newfname;
+	string newlname;
+	string check;
+	int studentId;
+	int blank;
+	cout << "Enter the student ID of the student you would like to edit." << endl;
+	cin >> studentId;
+	string studentId2 = to_string(studentId);
+	studentId2.append(".txt");
+	ifstream student(studentId2);
+	while (student >> fname >> lname >> blank) {
+		cout << "Is this the student you wish to edit? [y/n]" << endl;
+		cout << fname << ' ' << lname << endl;
+		cin >> check;
+		if ((check == "y") || (check == "Y")) {
+			system("cls");
+			cout << "Current information: " << endl;
+			int lnameLength = lname.size();
+			int fnameLength = fname.size();
+			int lengthTotal = fnameLength + lnameLength;
+
+			cout << "Name: ";
+			for (int x = 1; x < lengthTotal; x++) {
+				cout << " ";
+			}
+			cout << "ID #:" << endl;
+			for (int y = 1; y < lengthTotal + 20; y++) {
+				cout << '-';
+			}
+			cout << ' ' << endl;
+			cout << fname << ' ' << lname << ' ' << '\t' << studentId << endl;
+
+			cout << "Enter a new first name to assign this student" << endl;
+			cin >> newfname;
+			cout << "Enter a new last name to assign this student" << endl;
+			cin >> newlname;
+		}
+		if ((check == "n") || (check == "N")) {
+			main();
+		}
+	}
+	student.close();
+	ofstream student2(studentId2);
+	student2 << newfname << ' ' << newlname << ' ' << studentId << endl;
+	student2.close();
+	system("pause");
+	main();
+}
+
+void displayStudent() {
+	system("cls");
+	string fname;
+	string lname;
+	int studentId;
+	cout << "Students currently in the library database: " << endl;
+	cout << "----------------------------------" << endl;
+	ifstream dir("directory.txt");
+	while (dir >> fname >> lname >> studentId) {
+		cout << fname << ' ' << lname << ' ' << studentId << endl;
+	}
+	system("pause");
+	main();
+}
+
+
+// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
+// Debug program: F5 or Debug > Start Debugging menu
+
+// Tips for Getting Started: 
+//   1. Use the Solution Explorer window to add/manage files
+//   2. Use the Team Explorer window to connect to source control
+//   3. Use the Output window to see build output and other messages
+//   4. Use the Error List window to view errors
+//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
+//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
